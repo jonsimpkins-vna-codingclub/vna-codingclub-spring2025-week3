@@ -1,0 +1,216 @@
+<html>
+<head>
+    <title>VNA Coding Club, Week 3</title>
+
+    <link href="helpers/styles.css" rel="stylesheet" />
+
+    <script src="helpers/helper_methods.js"></script>
+    <script type="text/javascript">window.addEventListener('error', onError);</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <h1 class="headline">VNA Coding Club, Week 3</h1>
+
+    <div class="wrapper">
+        <div class="wrapper-direct-child">
+            <div class="button-row">
+                <button id="prev-btn" onclick="prevInstructions()"><-</button>
+                <button id="next-btn" onclick="nextInstructions()">-></button>
+            </div>
+            <div id="instructions"></div>
+        </div>
+        
+        <div class="wrapper-direct-child">
+            <button id="execute-button" onclick="executeBtn()"></button>
+
+            <div id="success-msg" onclick="location.reload()"></div>
+
+            <div>Output:</div>
+            <pre id="error"></pre>
+            
+            <pre id="console">... this is where the code output will go...</pre>
+        </div>
+    </div>
+
+    
+<!-- Step-by-step instructions, in Markdown -->
+<script id="step0" type="text/plain">
+# Step 0
+
+Welcome back!
+
+> This week we're going to keep working with
+text, we'll do some analysis of **all of Shakespeare's sonnets**
+(seemed like a good fit for the week of Valentine's day).
+
+We assume that you've finished all the way through Step 3 of the
+Week 2 exercises. If you haven't finished that yet, feel free to
+go back and finish that now, and we'll see you
+when you're done.
+
+## Splitting strings - review
+
+Remember from last week that there is a `split()` method you can
+call on a string value, and that returns an array of smaller strings:
+
+```
+let w = 'These are some words';
+let x = w.split(' '); // ['These', 'are', 'some', 'words']
+let y = x.length; // 4
+let z = y[2]; // 'some'
+```
+
+By calling `split(' ')` on a string, you can break the string up into
+an array of words with the spaces removed.
+
+> **CHALLENGE**: to proceed, go ahead and update
+`step_0.js` to `log()` so that it logs both the length of the string
+provided and the 3rd word in that string
+</script>
+
+<script id="step1" type="text/plain">
+# Step 1
+
+Now let's take a deeper dive on the `split` function
+
+## Splitting Strings - cont'd
+
+Did you wonder what the `' '` was when we called `split(' ')`?
+
+That's the rule that the function is using to decide what to split
+on. If instead you did:
+
+```
+let x = 'some-separated-words';
+let y = x.split('-'); // ['some', 'separated', 'words'];
+```
+
+The term for this separating string is the **delimiter**. If you get
+sent a string with a bunch of values **delimited** by a comma, for example,
+you'd refer to that as a **comma-delimited** list of values.
+
+## Quick aside: newlines
+
+We've said before that you can use a `string` to represent any written text,
+like a sentence, or a poem, or a full novel. So how does a computer represent
+text that takes more than one line??
+
+There's a special character `'\n'` that computers use to represent the data of
+"ok, time to start a new line of text." Even though `'\n'` looks like 2 different
+characters, the computer treats them as just one.
+
+So the text that you see on the screen as:
+
+```
+This is one line
+and this is another.
+```
+
+is represented in a variable as something like:
+
+```
+let x = 'This is one line\nand this is another.';
+```
+
+> **Check-in**: if the newline character is just `'\n'`, then why
+does the above have `\nand`? Remember that computers aren't looking
+for words in strings, they're just reading characters, so after it
+reads `\n`, it immediately starts with the word `and` at the beginning
+of the next line.
+
+## Challenge Time
+
+Ok, for the challenge for Step 1, we're going to implement a function
+that will be given a spreadsheet of information, in string form:
+
+* You can split the string on newlines (`'\n'`) to get the rows of data
+* You can split each line of data on commas (`','`) to get the columns of data for that row
+* Log the number of rows of data (including the first row)
+* Log the data at:
+  * Row 0, Column 2
+  * Row 1, Column 0
+
+Got all that? Awesome, let's get started!
+
+> **Challenge**: update `step_1.js` to parse the data given, and log the specific data above
+
+
+</script>
+
+<script id="step2" type="text/plain">
+# Step 2
+
+Let's chat about a place where our "split a string into words" work
+starts to fall apart:
+
+```
+let x = 'Love all, trust a few, do wrong to none';
+let y = x.split(' ');
+let z = y[1]; // 'all,'
+```
+
+> **Check-in**: why is the value of `z` equal to `'all,'`,
+instead of just `'all'`? Because we're splitting on spaces,
+which leaves in stuff like punctuation!
+
+## Regex - What is it
+
+Regex (or **Reg**ular **Ex**pressions) is an incredibly powerful
+way of doing pattern matching with strings.
+
+You can do incredibly powerful things with Regex [like this](https://regex101.com/r/kI6rE7/1)
+to scan text and look for certain patterns.
+
+> If you want to explore Regex, [https://www.regex101.com](https://www.regex101.com) is a great resource
+for trying it out
+
+**DISCLAIMER**: Regex is super powerful, and also notoriously error-prone, since small
+changes in patterns can have huge impacts. Use with caution.
+
+## Regex - Using it to split text more effectively
+
+For our use case, let's say instead of "split the string on spaces", we
+want our function to "split the string on non-letters".
+
+We can pass a Regex pattern into `split` to do that:
+
+```
+let x = 'Love all, trust a few, do wrong to none';
+let y = x.split(/[^a-zA-Z]+/);
+let z = y[1]; // 'all'
+```
+
+which now correctly ignores the punctuation!!
+
+The `/[^a-zA-Z]+/` bit is the Regex pattern, and it's
+saying to look for "one or more characters that are not English letters",
+so that will split on not just spaces, but also punctuation.
+
+## Challenge - Count lines from Shakespeare
+
+We're going to give you a string containing all the sonnets from Shakespeare
+as one very long string, and give you a line number. Your job is to:
+
+* Log the length of that string (how many characters long)
+* Log the total number of lines in that string
+* Log the 3rd word in the requested line
+
+> Open `step_2.js` and implement the above criteria!
+
+
+</script>
+<script id="step3" type="text/plain">
+# Step 3
+
+Ran out of time this week, go ahead and ask me
+and I'll tell you a stretch goal for the week :)
+
+</script>
+
+    <!-- This script runs at the end, intentionally -->
+    <script>
+        documentReady();
+    </script>
+</body>
+</html>
